@@ -179,6 +179,7 @@ In order to proceed with the analysis, we must first ensure that the trip_length
 min(cyclistic_data$trip_length)
 max(cyclistic_data$trip_length)
 ```
+![min max](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/84b98e1b-3ef8-4176-9faf-eacc25b205eb)
 
 Basically, all of the numbers returned from functions are in minutes. However, there shouldn't be any negative values in the trip_length column, but for some reason, they tend to occur here. Therefore, we should clean out the trip_length column and filter it to contain only trip_length values that are larger than one minute.
 ```r
@@ -190,6 +191,7 @@ Now it is time to perform a descriptive analysis of this data frame using the su
 ```r
 summary(cyclistic_clean_data$trip_length)
 ```
+![sammary](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/20116885-f114-4728-94a7-20405cbfa384)
 
 It is still important to recheck and make sure there are things that need to be cleaned out. First, it will be necessary for us to find any NA values in each column. To do this, we will be executing the following function:
 ```r
@@ -197,14 +199,21 @@ colSums(is.na(cyclistic_clean_data))
 ```
 According to the data frame there are no NA values in any of the columns. 
 
+![na](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/aa7e69ba-d8bc-45e6-9252-5323f23f53de)
+
 Then , it should be checked for duplicate ride_id values so that they can be removed. When the returned value is FALSE, it means that there are no duplicate values in the data frame.
 ```r
 any(duplicated(cyclistic_clean_data$ride_id))
 ```
+
+![dupplicated](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/bf95ca18-30b6-430e-8f5e-854d3c77446d)
+
 As a final step, inspect the structure of the new data frame to see if there are any data types that are not matching the type of data in the columns.
 ```r
 str(cyclistic_clean_data)
 ```
+![str](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/700d3531-ace9-4219-9e63-871183931b42)
+
 After cleaning out the raw data set that had 5,674,399 rows, we now have a clean data set that has 4,203,068 rows and 18 columns . All of the data containing the correct data types. It is now time to analyze this clean data to see how it could be used.
 
 
