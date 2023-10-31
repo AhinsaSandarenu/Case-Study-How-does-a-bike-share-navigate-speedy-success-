@@ -3,9 +3,15 @@
 
 This project has been prepared as the capstone assignment for the Google Data Analytics Professional Certificate program. The goal of this program is to prepare participants for a career in the field of data analytics by teaching them key analytical skills such as data cleaning, analysis, and visualization as well as tools such as Excel, SQL, R Programming, and Tableau in order to prepare them for the competitive job market.This project will analyze publicly available datasets provided by the course.
 
-# table of contant 
-- [Introduction](#introduction)
+## table of contant 
+- [About company ](#about-company )
+- [Ask](#ask)
+- [Prepare](#prepare)
+- [Process](#process)
+- [Analyze and Share ](#analyze-and-share )
+- [Act](#act)
 
+  
 ## About company 
 
 Cyclistic is a fictional bike sharing company in Chicago. In total, there are more than 5,800 bicycles and 600 docking stations throughout the city. bikes can be unlocked from one station and returned to any other station in the system at anytime. The cyclistic offers three different price plans: single-ride passes, full-day passes, and annual memberships. Customers who buy a single-ride pass or full-day pass are considered casual riders, while those who purchase annual memberships are considered cyclistic members. 
@@ -24,7 +30,7 @@ For future growth, Cyclistic prioritizes the conversion of casual riders into an
 
 This analysis follows Google's data analysis process for ensuring a structured and comprehensive analysis, which consists of six main steps: Ask, Prepare, Process, Analyze, Share, and Act. 
 
-### Ask
+## Ask
 
 The main business task in this project is to develop marketing strategies aimed at converting casual riders into annual members.
 
@@ -62,7 +68,7 @@ In further analysis, it is observed that all files have the same 13 columns, and
 **Limitations-**
 It is not possible to determine if casual riders live in the service area and purchased multiple single passes because past purchases to credit card numbers has been de-personalized to protect the privacy of users.
 
-## process
+## Process
 **Tools used for processing data**
 
 Spreadsheets are not suitable for this project due to the large amount of raw data in this dataset. R Studio is the best used for this project as it has a wide range of tools and can easily handle large amounts of data.RStudio used to clean, analyze and aggregate the large amount of monthly data stored in the bike trip folder.
@@ -216,18 +222,122 @@ str(cyclistic_clean_data)
 
 After cleaning out the raw data set that had 5,674,399 rows, we now have a clean data set that has 4,203,068 rows and 18 columns . All of the data containing the correct data types. It is now time to analyze this clean data to see how it could be used.
 
+## Analyze and Share 
+Now that we have the cleaned data for further processing, the next step is to answer the given business question.  Below is the business question that needs to be answered.
+
+**How do annual members and casual riders use Cyclistic bikes differently?**
+
+The key data to help answer this question is obtained after cleaning.  Using available data it can be analyzed in various ways as follows.
+
+**Comparing the number of rides per month**
+
+Analyzing and comparing monthly ridership between casual riders and members is important to answering our business question.To do this, a data frame must be created in RStudio by extracting the columns from cycling_clean_data.  It requires the start_at column and theember_casual column. A row_count column should also be added to that data frame to count the bike rides for each month. This data frame is named month_count.  
+
+```r
+month_count=cyclistic_clean_data%>%
+  group_by(month=month.name[month(started_at)],member_casual)%>%
+  summarise(row_count=n())%>%
+  arrange(match(month,month.name))
+write.csv(month_count,"month count.csv",row.names = FALSE)
+```
+The first 6 row of the data frame can be previewed using the head() function:
+
+![head](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/ac52aa39-651a-4d7b-9f0f-83245b4bac6d)
+
+To get an easy understanding of the data, it was visualized using Tableau.
+![Numbers of riders by month ](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/aba18002-b4c4-4988-ae07-6e03babbf9eb)
+
+As can be seen from the visualization above, June, July and August have the highest number of rides for both casual riders and members.This pattern suggests that demand for bicycle use is higher during the summer season.  The generally low rainfall may have led to an increase in bicycle use. This visualization clearly shows that casual riders and members have used bikes more in these months.
+
+**Comparing bike usage on days of the week**
+
+This data can also be used to analyze how casual riders and members change their bike usage on different days of the week.Using the cyclic_clean_data, a new data frame will be created which contains the weekday and member columns and then create a new column to count the number of rides on a certain weekday.This data frame is named week_count.
+
+```r
+weekday_count=cyclistic_clean_data%>%
+  group_by(day_of_week=day_of_week,member_casual=member_casual)%>%
+  summarise(row_count=n())
+write.csv(weekday_count,"weekday count.csv",row.names = FALSE)
+```
+The output of the code chunk above can be viewed using the View() function.
+
+![weekdaycount](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/4ed235a8-ce90-49e0-926f-a8ee76a9d4e1)
+
+In order to clearly understand what the trends are for casual riders and members, this data can be imported into Tableau for create a viz.
+
+![bike usage on days](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/0c45c23f-2c17-4945-9d0d-8acb86f21981)
+
+It can be seen clearly from this graph that there is a distinct difference in bicycle usage between casual riders and members.
+
+- **Bike usage by casual riders peaks on weekends**- According to these findings, this could indicate casual riders are people who use their bikes for leisure and recreation purposes during their free time.This suggests they may be using the bikes for their own personal purposes and may find the bikes convenient for personal endeavors.
+- **Bike usage by members peaks on weekdays** -This shows that many members use the bikes for their transportation and commuting purposes, and it may be that they are finding the bikes are convenient and reliable in terms of their transportation for their work and their weekday commitments.
+
+**compare Top 5 starting and ending stations**
+
+It is also possible to use this data in order to identify the top five locations for both casual riders and members, as well as to identify the most popular destinations for both groups to ride.This can be accomplished by creating the following two data frames.
+
+```r
+top_start_station<- cyclistic_clean_data%>%
+  group_by(start_station_name,member_casual)%>%
+  summarize(row_count=n())%>%
+  arrange(desc(row_count))
+write.csv(top_start_station,"top_start_station.csv",row.names = FALSE)
+
+top_end_station<- cyclistic_clean_data%>%
+  group_by(end_station_name,member_casual)%>%
+  summarize(row_count=n())%>%
+  arrange(desc(row_count))
+write.csv(top_end_station,"top_end_station.csv",row.names = FALSE)
+```
+Currently, the data frame of the dataset has already been sorted in descending order, but here the top 5 positions of the data frame have not been filtered yet, and the top 5 positions can be filtered through Tableau.
+![top 5 station casual](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/ef7f8fe1-ef6c-4a38-9598-8a1a83aef6dd)
+
+![top 5 end station casual](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/9b305298-03c6-4ae1-b7d9-0d817cb1043c)
+
+![top 5 station member](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/b2f92df1-ae86-4582-b7d7-3389d501c4a2)
+
+![top 5 end station member](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/fe069438-91d2-4fa9-b658-45ea4d5ebb19)
+
+**compare trip lenghts** 
+
+It is possible to compare the trip lengths of casual riders and annual members in this analysis. This analysis can provide insight into the average ride length as well as whether there are significant differences in ride lengths between the two groups. To compare the trip lengths of the two groups, the following code is used:
+
+```r
+ride_lenght<-cyclistic_clean_data%>%
+  group_by(member_casual,)%>%
+  summarize(mean(trip_length))
+write.csv(ride_lenght,"ride_lenght.csv",row.names = FALSE)
+```
+
+![avarage trip lenght](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/1a39beba-0903-4278-aac8-538717a62f5c)
+
+Considering the data frame, casual riders have a longer trip length than members, with an average travel time of 23 minutes for casual riders and 12 minutes for members.
+
+![mean by day](https://github.com/AhinsaSandarenu/Case-Study-How-does-a-bike-share-navigate-speedy-success-/assets/149358322/deffe654-3b37-4a85-a8b7-2cd7b2dacdeb)
+
+When comparing bicycle use on different days of the week, the disparity in running distances between casual riders and members may provide some explanation for the former conclusion. The majority of casual bicycle riders use their bikes for leisure activities, exploration, and long excursions, which can result in a longer travel time.Additionally, members who primarily utilize the service for routine commuting or short travel have relatively short trip distances.
+
+## Act
+
+The data was analyzed in order to get an understanding of the different usage patterns of casual riders as well as members, and now the data is ready for the last step of the analysis process: act.Based on the findings of this analysis, the final step is to provide recommendations for the company's marketing strategies to convert casual riders into annual members. They are listed below.
+
+**1. Campaigns during the summer:** 
+
+- Casual riding is at its peak in June, July and August so it makes sense to capitalize on those months.In order to promote the benefits of annual membership, Allocate a significant portion of the marketing budget during these months . 
+- Explain to casual riders that an annual membership is a more convenient and cost-effective solution during the summer season
+
+**2. Weekend-targeted benefits:** 
+- Offer benefits to members such as exclusive access to certain events and venues on the weekend, and coupons for restaurants as part of weekend offer.
+- Make audience aware flexibility and convenience of cyclistic bikes for weekend adventures and leisure activities.
+
+
+**3. Station-specific promotion:** 
+- Focus on top spots frequented by casual riders, such as Streeter Dr & Grand Ave, DuSable Lake Shore Dr & Monroe St, Michigan Ave & Oak St, Millennium Park, DuSable Lake Shore Dr & North Blvd.
+- distribute casual rider promotional materials in this stations. 
+- Prominently display targeted advertisements at these locations.
+- conduct on-site registrations and discounts at these locations to attract casual riders and encourage them to become annual members.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+ 
 
